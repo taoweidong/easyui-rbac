@@ -10,150 +10,169 @@ import java.util.List;
 
 /**
  * 员工
- *
  * @author ____′↘夏悸
  */
 @Entity
 @Table(name = "crm_member")
 public class Member {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    @Column(length = 64, nullable = false, unique = true, updatable = false)
-    private String userName;
+	@Column(length = 64, nullable = false, unique = true, updatable = false)
+	private String userName;
 
-    @Column(length = 128, nullable = false)
-    @JsonIgnore//json序列化的时候，忽略密码字段
-    private String password;
+	@Column(length = 128, nullable = false)
+	@JsonIgnore // json序列化的时候，忽略密码字段
+	private String password;
 
-    @Column(length = 64, nullable = false)
-    private String realName;
+	@Column(length = 64, nullable = false)
+	private String realName;
 
-    @Column(length = 16)
-    @Enumerated(EnumType.STRING)
-    private Gender gender;
+	@Column(length = 16)
+	@Enumerated(EnumType.STRING)
+	private Gender gender;
 
-    @Column(length = 64)
-    private String telephone;
+	@Column(length = 64)
+	private String telephone;
 
-    @Column(length = 128)
-    private String email;
+	@Column(length = 128)
+	private String email;
 
-    @Column(length = 256)
-    private String avatar;
+	@Column(length = 256)
+	private String avatar;
 
-    /**
-     * 入职时间
-     */
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    private Date hiredate;
+	/**
+	 * 入职时间
+	 */
+	@JsonFormat(pattern = "yyyy-MM-dd")
+	private Date hiredate;
 
-    private Boolean status = false;
+	private Boolean status = false;
 
-    @ManyToMany(targetEntity = Role.class)
-    @JoinTable(name = "crm_member_role",
-            joinColumns = {
-                    @JoinColumn(name = "member_id")
-            }, inverseJoinColumns = {
-            @JoinColumn(name = "role_id")
-    })
-    private List<Role> roles;
+	@ManyToMany(targetEntity = Role.class)
+	@JoinTable(name = "crm_member_role", joinColumns = {
+			@JoinColumn(name = "member_id") }, inverseJoinColumns = {
+					@JoinColumn(name = "role_id") })
+	private List<Role> roles;
 
-    public Long getId() {
-        return id;
-    }
+	public Long getId() {
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+		return id;
+	}
 
-    public String getUserName() {
-        return userName;
-    }
+	public void setId(Long id) {
 
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
+		this.id = id;
+	}
 
-    public String getPassword() {
-        return password;
-    }
+	public String getUserName() {
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
+		return userName;
+	}
 
-    public String getRealName() {
-        return realName;
-    }
+	public void setUserName(String userName) {
 
-    public void setRealName(String realName) {
-        this.realName = realName;
-    }
+		this.userName = userName;
+	}
 
-    public Gender getGender() {
-        return gender;
-    }
+	public String getPassword() {
 
-    public void setGender(Gender gender) {
-        this.gender = gender;
-    }
+		return password;
+	}
 
-    public String getTelephone() {
-        return telephone;
-    }
+	public void setPassword(String password) {
 
-    public void setTelephone(String telephone) {
-        this.telephone = telephone;
-    }
+		this.password = password;
+	}
 
-    public String getEmail() {
-        return email;
-    }
+	public String getRealName() {
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+		return realName;
+	}
 
-    public Date getHiredate() {
-        return hiredate;
-    }
+	public void setRealName(String realName) {
 
-    public void setHiredate(Date hiredate) {
-        this.hiredate = hiredate;
-    }
+		this.realName = realName;
+	}
 
-    public Boolean getStatus() {
-        return status;
-    }
+	public Gender getGender() {
 
-    public void setStatus(Boolean status) {
-        this.status = status;
-    }
+		return gender;
+	}
 
-    public List<Role> getRoles() {
-        return roles;
-    }
+	public void setGender(Gender gender) {
 
-    public void setRoles(List<Role> roles) {
-        this.roles = roles;
-    }
+		this.gender = gender;
+	}
 
-    public void setAvatar(String avatar) {
-        this.avatar = avatar;
-    }
+	public String getTelephone() {
 
-    public String getAvatar() {
-        return avatar;
-    }
+		return telephone;
+	}
 
-    @Override
-    public String toString() {
-        return "Member [id=" + id + ", userName=" + userName + ", password=" + password + ", realName=" + realName
-                + ", gender=" + gender + ", telephone=" + telephone + ", email=" + email + ", hiredate=" + hiredate
-                + ", status=" + status + "]";
-    }
+	public void setTelephone(String telephone) {
+
+		this.telephone = telephone;
+	}
+
+	public String getEmail() {
+
+		return email;
+	}
+
+	public void setEmail(String email) {
+
+		this.email = email;
+	}
+
+	public Date getHiredate() {
+
+		return hiredate;
+	}
+
+	public void setHiredate(Date hiredate) {
+
+		this.hiredate = hiredate;
+	}
+
+	public Boolean getStatus() {
+
+		return status;
+	}
+
+	public void setStatus(Boolean status) {
+
+		this.status = status;
+	}
+
+	public List<Role> getRoles() {
+
+		return roles;
+	}
+
+	public void setRoles(List<Role> roles) {
+
+		this.roles = roles;
+	}
+
+	public void setAvatar(String avatar) {
+
+		this.avatar = avatar;
+	}
+
+	public String getAvatar() {
+
+		return avatar;
+	}
+
+	@Override
+	public String toString() {
+
+		return "Member [id=" + id + ", userName=" + userName + ", password=" + password
+				+ ", realName=" + realName + ", gender=" + gender + ", telephone=" + telephone
+				+ ", email=" + email + ", hiredate=" + hiredate + ", status=" + status + "]";
+	}
 
 }

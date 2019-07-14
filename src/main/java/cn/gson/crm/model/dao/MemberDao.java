@@ -6,9 +6,10 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface MemberDao extends PagingAndSortingRepository<Member, Long>, JpaSpecificationExecutor {
+public interface MemberDao
+		extends PagingAndSortingRepository<Member, Long>, JpaSpecificationExecutor {
 
-    int countByUserName(String userName);
+	int countByUserName(String userName);
 
-    Member findByUserName(String userName);
+	Member findByUserName(String userName);
 }

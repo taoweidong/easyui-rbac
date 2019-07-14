@@ -8,164 +8,185 @@ import java.io.File;
 import java.util.Date;
 
 /**
- * <p>****************************************************************************</p>
- * <p><b>Copyright © 2010-2017 soho team All Rights Reserved<b></p>
+ * <p>
+ * ****************************************************************************
+ * </p>
+ * <p>
+ * <b>Copyright © 2010-2017 soho team All Rights Reserved<b>
+ * </p>
  * <ul style="margin:15px;">
  * <li>Description : 系统附件信息</li>
- * <li>Version     : 1.0</li>
- * <li>Creation    : 2017年07月12日</li>
- * <li>Author      : 郭华</li>
+ * <li>Version : 1.0</li>
+ * <li>Creation : 2017年07月12日</li>
+ * <li>Author : 郭华</li>
  * </ul>
- * <p>****************************************************************************</p>
+ * <p>
+ * ****************************************************************************
+ * </p>
  */
 @Entity
 @Table(name = "crm_attachment")
 public class Attachment {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
-    @Column(name = "att_type", length = 20)
-    @Enumerated(EnumType.STRING)
-    private AttachmentType type;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    /**
-     * 上传人
-     */
-    @ManyToOne
-    @JsonIgnore
-    private Member member;
+	@Column(name = "att_type", length = 20)
+	@Enumerated(EnumType.STRING)
+	private AttachmentType type;
 
-    /**
-     * 文件原始名称
-     */
-    private String originalName;
+	/**
+	 * 上传人
+	 */
+	@ManyToOne
+	@JsonIgnore
+	private Member member;
 
-    /**
-     * 文件存储的相对路径
-     */
-    @Column(length = 100, unique = true)
-    private String filePath;
+	/**
+	 * 文件原始名称
+	 */
+	private String originalName;
 
-    /**
-     * 文件大小
-     */
-    private Long fileSize;
+	/**
+	 * 文件存储的相对路径
+	 */
+	@Column(length = 100, unique = true)
+	private String filePath;
 
-    /**
-     * 文件类型(后缀)
-     */
-    @Column(length = 20)
-    private String suffix;
+	/**
+	 * 文件大小
+	 */
+	private Long fileSize;
 
-    @Column(length = 64)
-    private String contentType;
+	/**
+	 * 文件类型(后缀)
+	 */
+	@Column(length = 20)
+	private String suffix;
 
-    /**
-     * 上传时间
-     */
-    @Column(updatable = false)
-    private Date uploadTime = new Date();
+	@Column(length = 64)
+	private String contentType;
 
-    /**
-     * 非持久化字段，不需要存储到数据库,也不做json的序列化
-     */
-    @Transient
-    @JsonIgnore
-    private File file;
+	/**
+	 * 上传时间
+	 */
+	@Column(updatable = false)
+	private Date uploadTime = new Date();
 
-    public Long getId() {
-        return id;
-    }
+	/**
+	 * 非持久化字段，不需要存储到数据库,也不做json的序列化
+	 */
+	@Transient
+	@JsonIgnore
+	private File file;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	public Long getId() {
 
-    public AttachmentType getType() {
-        return type;
-    }
+		return id;
+	}
 
-    public void setType(AttachmentType type) {
-        this.type = type;
-    }
+	public void setId(Long id) {
 
-    public Member getMember() {
-        return member;
-    }
+		this.id = id;
+	}
 
-    public void setMember(Member member) {
-        this.member = member;
-    }
+	public AttachmentType getType() {
 
-    public String getOriginalName() {
-        return originalName;
-    }
+		return type;
+	}
 
-    public void setOriginalName(String originalName) {
-        this.originalName = originalName;
-    }
+	public void setType(AttachmentType type) {
 
-    public String getFilePath() {
-        return filePath;
-    }
+		this.type = type;
+	}
 
-    public void setFilePath(String filePath) {
-        this.filePath = filePath;
-    }
+	public Member getMember() {
 
-    public Long getFileSize() {
-        return fileSize;
-    }
+		return member;
+	}
 
-    public void setFileSize(Long fileSize) {
-        this.fileSize = fileSize;
-    }
+	public void setMember(Member member) {
 
-    public String getSuffix() {
-        return suffix;
-    }
+		this.member = member;
+	}
 
-    public void setSuffix(String suffix) {
-        this.suffix = suffix;
-    }
+	public String getOriginalName() {
 
-    public Date getUploadTime() {
-        return uploadTime;
-    }
+		return originalName;
+	}
 
-    public void setUploadTime(Date uploadTime) {
-        this.uploadTime = uploadTime;
-    }
+	public void setOriginalName(String originalName) {
 
-    public void setContentType(String contentType) {
-        this.contentType = contentType;
-    }
+		this.originalName = originalName;
+	}
 
-    public String getContentType() {
-        return contentType;
-    }
+	public String getFilePath() {
 
-    public void setFile(File file) {
-        this.file = file;
-    }
+		return filePath;
+	}
 
-    public File getFile() {
-        return file;
-    }
+	public void setFilePath(String filePath) {
 
-    @Override
-    public String toString() {
-        return "Attachment{" +
-                "id=" + id +
-                ", type=" + type +
-                ", member=" + member.getRealName() +
-                ", originalName='" + originalName + '\'' +
-                ", filePath='" + filePath + '\'' +
-                ", fileSize=" + fileSize +
-                ", suffix='" + suffix + '\'' +
-                ", contentType='" + contentType + '\'' +
-                ", uploadTime=" + uploadTime +
-                '}';
-    }
+		this.filePath = filePath;
+	}
+
+	public Long getFileSize() {
+
+		return fileSize;
+	}
+
+	public void setFileSize(Long fileSize) {
+
+		this.fileSize = fileSize;
+	}
+
+	public String getSuffix() {
+
+		return suffix;
+	}
+
+	public void setSuffix(String suffix) {
+
+		this.suffix = suffix;
+	}
+
+	public Date getUploadTime() {
+
+		return uploadTime;
+	}
+
+	public void setUploadTime(Date uploadTime) {
+
+		this.uploadTime = uploadTime;
+	}
+
+	public void setContentType(String contentType) {
+
+		this.contentType = contentType;
+	}
+
+	public String getContentType() {
+
+		return contentType;
+	}
+
+	public void setFile(File file) {
+
+		this.file = file;
+	}
+
+	public File getFile() {
+
+		return file;
+	}
+
+	@Override
+	public String toString() {
+
+		return "Attachment{" + "id=" + id + ", type=" + type + ", member=" + member.getRealName()
+				+ ", originalName='" + originalName + '\'' + ", filePath='" + filePath + '\''
+				+ ", fileSize=" + fileSize + ", suffix='" + suffix + '\'' + ", contentType='"
+				+ contentType + '\'' + ", uploadTime=" + uploadTime + '}';
+	}
 }

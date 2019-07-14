@@ -2,9 +2,7 @@ package cn.gson.crm.model.enums;
 
 /**
  * 性别
- * 
- * @author ____′↘夏悸
- *
+ * @author taowd
  */
 public enum Gender {
 	BOY, GIRL

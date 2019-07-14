@@ -9,5 +9,5 @@ import java.util.List;
 @Repository
 public interface RoleDao extends PagingAndSortingRepository<Role, Long> {
 
-    List<Role> findByStatus(boolean b);
+	List<Role> findByStatus(boolean b);
 }

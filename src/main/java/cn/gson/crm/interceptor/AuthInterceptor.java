@@ -13,61 +13,62 @@ import java.util.Set;
 
 /**
  * 权限URL拦截器
- *
  * @author gson
  */
 public class AuthInterceptor implements HandlerInterceptor {
 
-    @Override
-    @SuppressWarnings("unchecked")
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        HttpSession session = request.getSession();
+	@Override
+	@SuppressWarnings("unchecked")
+	public boolean preHandle(HttpServletRequest request, HttpServletResponse response,
+			Object handler) throws Exception {
 
-        boolean isSuper = (boolean) session.getAttribute("isSuper");
+		HttpSession session = request.getSession();
 
-        HandlerMethod hm = (HandlerMethod) handler;
-        if (hm.getBean() instanceof AppController
-                || hm.getBean() instanceof AttachmentController
-                || isSuper) {
-            //App里面的就不做权限控制了，相当于公共的，省的写一个就要配置一个例外
-            //超管也直接跳过权限
-            return true;
-        }
+		boolean isSuper = (boolean) session.getAttribute("isSuper");
 
-        // 获取用户所有可以访问的请求
-        Set<String> urls = (Set<String>) session.getAttribute("urls");
-        String uri = request.getRequestURI();
+		HandlerMethod hm = (HandlerMethod) handler;
+		if (hm.getBean() instanceof AppController || hm.getBean() instanceof AttachmentController
+				|| isSuper) {
+			// App里面的就不做权限控制了，相当于公共的，省的写一个就要配置一个例外
+			// 超管也直接跳过权限
+			return true;
+		}
 
-        if (!urls.contains(uri)) {
+		// 获取用户所有可以访问的请求
+		Set<String> urls = (Set<String>) session.getAttribute("urls");
+		String uri = request.getRequestURI();
 
-            if (isAjax(request)) {
-                response.setStatus(401);
-            } else {
-                response.setContentType("text/html;charset=utf-8");
-                // 非ajax请求，没有权限，转到提示页面
-                request.getRequestDispatcher("/reject").forward(request, response);
-            }
-            // 没有权限
-            return false;
-        }
+		if (!urls.contains(uri)) {
 
-        return true;
-    }
+			if (isAjax(request)) {
+				response.setStatus(401);
+			} else {
+				response.setContentType("text/html;charset=utf-8");
+				// 非ajax请求，没有权限，转到提示页面
+				request.getRequestDispatcher("/reject").forward(request, response);
+			}
+			// 没有权限
+			return false;
+		}
 
-    private boolean isAjax(HttpServletRequest request) {
-        return "XMLHttpRequest".equalsIgnoreCase(request.getHeader("X-Requested-With"));
-    }
+		return true;
+	}
 
-    @Override
-    public void afterCompletion(HttpServletRequest arg0, HttpServletResponse arg1, Object arg2, Exception arg3)
-            throws Exception {
+	private boolean isAjax(HttpServletRequest request) {
 
-    }
+		return "XMLHttpRequest".equalsIgnoreCase(request.getHeader("X-Requested-With"));
+	}
 
-    @Override
-    public void postHandle(HttpServletRequest arg0, HttpServletResponse arg1, Object arg2, ModelAndView arg3)
-            throws Exception {
+	@Override
+	public void afterCompletion(HttpServletRequest arg0, HttpServletResponse arg1, Object arg2,
+			Exception arg3) throws Exception {
 
-    }
+	}
+
+	@Override
+	public void postHandle(HttpServletRequest arg0, HttpServletResponse arg1, Object arg2,
+			ModelAndView arg3) throws Exception {
+
+	}
 
 }

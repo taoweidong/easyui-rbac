@@ -9,46 +9,48 @@ import org.springframework.stereotype.Service;
 @Service
 public class ResourceService {
 
-    Logger logger = Logger.getLogger(ResourceService.class);
+	Logger logger = Logger.getLogger(ResourceService.class);
 
-    @Autowired
-    ResourceDao resourceDao;
+	@Autowired
+	ResourceDao resourceDao;
 
-    /**
-     * 获取资源树
-     *
-     * @param status
-     * @return
-     */
-    public Iterable<Resource> getResourceTree(Boolean status) {
-        Iterable<Resource> root;
-        if (status == null) {
-            root = resourceDao.findByParentIsNull();
-        } else {
-            root = resourceDao.findByStatusAndParentIsNull(status, ResourceDao.WEIGHT_SORT);
-        }
-        this.buildTree(root, status);
-        return root;
-    }
+	/**
+	 * 获取资源树
+	 * @param status
+	 * @return
+	 */
+	public Iterable<Resource> getResourceTree(Boolean status) {
 
-    public Iterable<Resource> getResourceTree() {
-        return this.getResourceTree(null);
-    }
+		Iterable<Resource> root;
+		if (status == null) {
+			root = resourceDao.findByParentIsNull();
+		} else {
+			root = resourceDao.findByStatusAndParentIsNull(status, ResourceDao.WEIGHT_SORT);
+		}
+		this.buildTree(root, status);
+		return root;
+	}
 
-    private void buildTree(Iterable<Resource> root, Boolean status) {
-        root.forEach(t -> {
-            Iterable<Resource> children;
+	public Iterable<Resource> getResourceTree() {
 
-            if (status == null) {
-                children = resourceDao.findByParent(t, ResourceDao.WEIGHT_SORT);
-            } else {
-                children = resourceDao.findByStatusAndParent(status, t, ResourceDao.WEIGHT_SORT);
-            }
+		return this.getResourceTree(null);
+	}
 
-            children.forEach(c -> t.getChildren().add(c));
+	private void buildTree(Iterable<Resource> root, Boolean status) {
 
-            // 此处递归
-            buildTree(children, status);
-        });
-    }
+		root.forEach(t -> {
+			Iterable<Resource> children;
+
+			if (status == null) {
+				children = resourceDao.findByParent(t, ResourceDao.WEIGHT_SORT);
+			} else {
+				children = resourceDao.findByStatusAndParent(status, t, ResourceDao.WEIGHT_SORT);
+			}
+
+			children.forEach(c -> t.getChildren().add(c));
+
+			// 此处递归
+			buildTree(children, status);
+		});
+	}
 }

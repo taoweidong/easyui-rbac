@@ -1,5 +1,7 @@
 package cn.gson.crm.common;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * @author taowd
  */
@@ -15,6 +17,33 @@ public class AjaxResult {
 
 	public AjaxResult() {
 
+	}
+
+	/**
+	 * 成功结果集
+	 * @param data 返回前台数据
+	 * @return 成功结果集
+	 */
+	public static AjaxResult success(Object data) {
+
+		AjaxResult ajaxResult = new AjaxResult();
+		ajaxResult.setSuccess(true);
+		ajaxResult.setMessage(Constants.SUCCESS_MSG);
+		ajaxResult.setData(data);
+		return ajaxResult;
+	}
+
+	/**
+	 * 失败结果集
+	 * @return 失败结果集
+	 */
+	public static AjaxResult fail() {
+
+		AjaxResult ajaxResult = new AjaxResult();
+		ajaxResult.setSuccess(true);
+		ajaxResult.setMessage(Constants.FAIL_MSG);
+		ajaxResult.setData(StringUtils.EMPTY);
+		return ajaxResult;
 	}
 
 	public AjaxResult(Boolean success) {
