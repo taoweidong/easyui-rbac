@@ -1,4 +1,4 @@
-package cn.gson.crm.interceptor;
+package cn.gson.crm.configuration.interceptor;
 
 import cn.gson.crm.common.Constants;
 import cn.gson.crm.common.ImUser;

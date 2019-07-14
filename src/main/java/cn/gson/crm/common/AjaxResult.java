@@ -40,8 +40,22 @@ public class AjaxResult {
 	public static AjaxResult fail() {
 
 		AjaxResult ajaxResult = new AjaxResult();
-		ajaxResult.setSuccess(true);
+		ajaxResult.setSuccess(false);
 		ajaxResult.setMessage(Constants.FAIL_MSG);
+		ajaxResult.setData(StringUtils.EMPTY);
+		return ajaxResult;
+	}
+
+	/**
+	 * 失败结果集
+	 * @param message 失败信息
+	 * @return 失败结果集
+	 */
+	public static AjaxResult fail(String message) {
+
+		AjaxResult ajaxResult = new AjaxResult();
+		ajaxResult.setSuccess(false);
+		ajaxResult.setMessage(message);
 		ajaxResult.setData(StringUtils.EMPTY);
 		return ajaxResult;
 	}

@@ -1,11 +1,11 @@
-package cn.gson.crm.controller;
+package cn.gson.crm.model.controller;
 
 import cn.gson.crm.common.AjaxResult;
 import cn.gson.crm.common.AttachmentType;
 import cn.gson.crm.common.Constants;
 import cn.gson.crm.model.domain.Attachment;
 import cn.gson.crm.model.domain.Member;
-import cn.gson.crm.service.AttachmentService;
+import cn.gson.crm.model.service.AttachmentService;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +38,7 @@ public class AttachmentController {
 
 	/**
 	 * 上传
-	 * @param type
+	 * @param type          文件类型
 	 * @param member
 	 * @param multipartFile
 	 * @return
@@ -52,9 +52,9 @@ public class AttachmentController {
 		try {
 			// 将通用方法，抽成服务，供其他地方调用
 			Attachment att = attachmentService.saveFile(member, type, multipartFile);
-			return new AjaxResult().setData(att);
+			return AjaxResult.success(att);
 		} catch (Exception e) {
-			return new AjaxResult(false, e.getMessage());
+			return AjaxResult.fail(e.getMessage());
 		}
 	}
 

@@ -1,7 +1,7 @@
-package cn.gson.crm.interceptor;
+package cn.gson.crm.configuration.interceptor;
 
-import cn.gson.crm.controller.AppController;
-import cn.gson.crm.controller.AttachmentController;
+import cn.gson.crm.model.controller.AppController;
+import cn.gson.crm.model.controller.AttachmentController;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;

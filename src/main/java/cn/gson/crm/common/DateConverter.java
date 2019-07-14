@@ -1,4 +1,4 @@
-package cn.gson.crm.converter;
+package cn.gson.crm.common;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

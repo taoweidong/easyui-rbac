@@ -5,5 +5,12 @@ package cn.gson.crm.model.enums;
  * @author gson
  */
 public enum ResourceType {
-	MENU, FUNCTION, BLOCK
+	/**
+	 * 菜单
+	 */
+	MENU,
+	/**
+	 * 功能
+	 */
+	FUNCTION, BLOCK
 }

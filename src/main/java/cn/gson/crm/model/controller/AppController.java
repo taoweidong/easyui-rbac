@@ -1,4 +1,4 @@
-package cn.gson.crm.controller;
+package cn.gson.crm.model.controller;
 
 import cn.gson.crm.common.AjaxResult;
 import cn.gson.crm.common.Constants;
@@ -13,7 +13,7 @@ import cn.gson.crm.model.domain.Resource;
 import cn.gson.crm.model.domain.Role;
 import cn.gson.crm.model.enums.Gender;
 import cn.gson.crm.model.enums.ResourceType;
-import cn.gson.crm.service.AttachmentService;
+import cn.gson.crm.model.service.AttachmentService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.codec.digest.DigestUtils;

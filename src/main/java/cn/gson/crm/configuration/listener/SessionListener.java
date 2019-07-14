@@ -1,4 +1,4 @@
-package cn.gson.crm.listener;
+package cn.gson.crm.configuration.listener;
 
 import cn.gson.crm.common.Constants;
 import cn.gson.crm.handler.WebSocketHandler;
@@ -18,7 +18,7 @@ import javax.servlet.http.HttpSessionListener;
  * <b>Copyright © 2010-2017 soho team All Rights Reserved<b>
  * </p>
  * <ul style="margin:15px;">
- * <li>Description : cn.gson.crm.listener</li>
+ * <li>Description : cn.gson.crm.configuration.listener</li>
  * <li>Version : 1.0</li>
  * <li>Creation : 2017年07月04日</li>
  * <li>Author : 郭华</li>

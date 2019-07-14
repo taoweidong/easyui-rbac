@@ -1,4 +1,4 @@
-package cn.gson.crm.controller.websocket;
+package cn.gson.crm.model.controller.websocket;
 
 import cn.gson.crm.common.AjaxResult;
 import cn.gson.crm.common.SocketMessage;

@@ -1,7 +1,7 @@
 package cn.gson.crm.configuration;
 
 import cn.gson.crm.handler.WebSocketHandler;
-import cn.gson.crm.interceptor.WebSocketHandlerInterceptor;
+import cn.gson.crm.configuration.interceptor.WebSocketHandlerInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;

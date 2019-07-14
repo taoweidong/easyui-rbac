@@ -1,7 +1,7 @@
 package cn.gson.crm.configuration;
 
-import cn.gson.crm.interceptor.AuthInterceptor;
-import cn.gson.crm.interceptor.LoginInterceptor;
+import cn.gson.crm.configuration.interceptor.AuthInterceptor;
+import cn.gson.crm.configuration.interceptor.LoginInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;

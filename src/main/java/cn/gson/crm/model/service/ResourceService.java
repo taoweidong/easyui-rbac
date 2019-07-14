@@ -1,4 +1,4 @@
-package cn.gson.crm.service;
+package cn.gson.crm.model.service;
 
 import cn.gson.crm.model.dao.ResourceDao;
 import cn.gson.crm.model.domain.Resource;

@@ -1,4 +1,4 @@
-package cn.gson.crm.controller.system;
+package cn.gson.crm.model.controller.system;
 
 import cn.gson.crm.common.AjaxResult;
 import cn.gson.crm.common.DataGrid;
@@ -6,7 +6,7 @@ import cn.gson.crm.model.dao.ResourceDao;
 import cn.gson.crm.model.dao.RoleDao;
 import cn.gson.crm.model.domain.Resource;
 import cn.gson.crm.model.domain.Role;
-import cn.gson.crm.service.ResourceService;
+import cn.gson.crm.model.service.ResourceService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;

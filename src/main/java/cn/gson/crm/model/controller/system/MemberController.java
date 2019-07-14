@@ -1,4 +1,4 @@
-package cn.gson.crm.controller.system;
+package cn.gson.crm.model.controller.system;
 
 import cn.gson.crm.common.AjaxResult;
 import cn.gson.crm.common.DataGrid;

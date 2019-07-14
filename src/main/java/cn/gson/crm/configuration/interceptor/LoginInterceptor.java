@@ -1,4 +1,4 @@
-package cn.gson.crm.interceptor;
+package cn.gson.crm.configuration.interceptor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

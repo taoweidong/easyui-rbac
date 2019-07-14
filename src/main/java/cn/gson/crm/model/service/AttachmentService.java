@@ -1,4 +1,4 @@
-package cn.gson.crm.service;
+package cn.gson.crm.model.service;
 
 import cn.gson.crm.common.AttachmentType;
 import cn.gson.crm.model.dao.AttachmentDao;
@@ -31,7 +31,7 @@ import java.util.UUID;
  * <b>Copyright © 2010-2017 soho team All Rights Reserved<b>
  * </p>
  * <ul style="margin:15px;">
- * <li>Description : cn.gson.crm.service</li>
+ * <li>Description : cn.gson.crm.model.service</li>
  * <li>Version : 1.0</li>
  * <li>Creation : 2017年07月12日</li>
  * <li>Author : 郭华</li>
