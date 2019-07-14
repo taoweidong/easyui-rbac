@@ -26,8 +26,8 @@
     <#if s_member.avatar??>
       <img class="avatar-set" src="${s_member.avatar}" alt="头像" width="80px" height="80px">
     <#else>
-    <#--  <img class="avatar-set" src="/images/default.gif" alt="头像" width="80px" height="80px">-->
-     <img class="avatar-set" src="D:\importFile\avatar\2019\07\5c3d4efe-97b2-45c5-8416-c79a9c374a2f.png" alt="头像" width="80px" height="80px">
+        <img class="avatar-set" src="/images/default.gif" alt="头像" width="80px" height="80px">
+    <#-- <img class="avatar-set" src="D:\importFile\avatar\2019\07\5c3d4efe-97b2-45c5-8416-c79a9c374a2f.png" alt="头像" width="80px" height="80px">-->
     </#if>
     </div>
     <div>
