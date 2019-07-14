@@ -43,301 +43,315 @@ import static org.apache.commons.lang.StringUtils.isNotEmpty;
 
 /**
  * 系统的入口控制器，入口控制器里面的请求，理论上都受权限控制
+ * @author taowd
  */
 @Controller
 @Transactional(readOnly = true)
 public class AppController {
 
-    Logger logger = Logger.getLogger(AppController.class);
+	private static final Logger LOGGER = Logger.getLogger(AppController.class);
 
-    @Autowired
-    MemberDao memberDao;
+	@Autowired
+	MemberDao memberDao;
 
-    @Autowired
-    RoleDao roleDao;
+	@Autowired
+	RoleDao roleDao;
 
-    @Autowired
-    ResourceDao resourceDao;
+	@Autowired
+	ResourceDao resourceDao;
 
-    @Autowired
-    WebSocketHandler webSocketHandler;
+	@Autowired
+	WebSocketHandler webSocketHandler;
 
-    @Autowired
-    AttachmentService attachmentService;
+	@Autowired
+	AttachmentService attachmentService;
 
-    /**
-     * 超级管理员id
-     */
-    @Value("${crm.system.super-user-id}")
-    Long superUserId;
+	/**
+	 * 超级管理员id
+	 */
+	@Value("${crm.system.super-user-id}")
+	Long superUserId;
 
-    @RequestMapping("/")
-    public String index() {
-        return "index";
-    }
+	@RequestMapping("/")
+	public String index() {
 
-    @RequestMapping("/login")
-    public String login(HttpSession session) {
-        if (session.getAttribute(SESSION_MEMBER_KEY) != null) {
-            return "redirect:/";
-        }
-        return "login";
-    }
+		return "index";
+	}
 
-    @RequestMapping("/logout")
-    public String logout(HttpSession session) {
-        session.invalidate();
-        return "redirect:/login";
-    }
+	@RequestMapping("/login")
+	public String login(HttpSession session) {
 
-    /**
-     * 权限resource的js资源
-     *
-     * @param session
-     * @return
-     */
-    @RequestMapping("/resource")
-    public String login(HttpSession session, Model model) {
-        ObjectMapper mapper = new ObjectMapper();
-        Object resourceKey = session.getAttribute("resourceKey");
-        try {
-            model.addAttribute("resourceKey", mapper.writeValueAsString(resourceKey));
-        } catch (JsonProcessingException e) {
-            logger.error("json转换错误", e);
-        }
-        return "resource";
-    }
+		if (session.getAttribute(SESSION_MEMBER_KEY) != null) {
+			return "redirect:/";
+		}
+		return "login";
+	}
 
-    @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public String doLoin(String userName, String password, RedirectAttributes rAttributes, HttpSession session) {
-        // 参数校验
-        if (isEmpty(userName) || isEmpty(password)) {
-            rAttributes.addFlashAttribute("error", "参数错误！");
-            return "redirect:/login";
-        }
+	@RequestMapping("/logout")
+	public String logout(HttpSession session) {
 
-        Member member = memberDao.findByUserName(userName);
+		session.invalidate();
+		return "redirect:/login";
+	}
 
-        // 校验密码
-        if (member == null || !member.getStatus()) {
-            rAttributes.addFlashAttribute("error", "用户不存在或已被禁用！");
-            return "redirect:/login";
-        } else if (!member.getPassword().equals(DigestUtils.sha256Hex(password))) {
-            rAttributes.addFlashAttribute("error", "用户名或密码错误！");
-            return "redirect:/login";
-        }
+	/**
+	 * 权限resource的js资源
+	 * @param session
+	 * @return
+	 */
+	@RequestMapping("/resource")
+	public String login(HttpSession session, Model model) {
 
-        if (webSocketHandler.isOnline(member.getId())) {
-            //通知下线
-            webSocketHandler.sendMessageToUser(member.getId(), new SocketMessage("logout", "").toTextMessage());
-            webSocketHandler.offLine(member.getId());
-        }
+		ObjectMapper mapper = new ObjectMapper();
+		Object resourceKey = session.getAttribute("resourceKey");
+		try {
+			model.addAttribute("resourceKey", mapper.writeValueAsString(resourceKey));
+		} catch (JsonProcessingException e) {
+			LOGGER.error("json转换错误", e);
+		}
+		return "resource";
+	}
 
-        final List<Resource> allResources;
+	@RequestMapping(value = "/login", method = RequestMethod.POST)
+	public String doLoin(String userName, String password, RedirectAttributes rAttributes,
+			HttpSession session) {
 
-        // 获取用户可用菜单,所有有权限的请求，所有资源key
-        List<Role> roles = member.getRoles();
+		// 参数校验
+		if (isEmpty(userName) || isEmpty(password)) {
+			rAttributes.addFlashAttribute("error", "参数错误！");
+			return "redirect:/login";
+		}
 
-        List<Resource> menus = new ArrayList<Resource>();
-        Set<String> urls = new HashSet<>();
-        Set<String> resourceKey = new HashSet<>();
+		Member member = memberDao.findByUserName(userName);
 
-        if (superUserId == member.getId()) {
-            // 超级管理员，直接获取所有权限资源
-            allResources = resourceDao.findByStatus(true, new Sort(Direction.DESC, "weight"));
-        } else {
-            allResources = new ArrayList<>();
-            // forEach 1.8jdk才支持
-            roles.forEach(t -> allResources.addAll(t.getResource()));
-        }
+		// 校验密码
+		if (Objects.isNull(member) || !member.getStatus()) {
+			rAttributes.addFlashAttribute("error", "用户不存在或已被禁用！");
+			return "redirect:/login";
+		} else if (!member.getPassword().equals(DigestUtils.sha256Hex(password))) {
+			rAttributes.addFlashAttribute("error", "用户名或密码错误！");
+			return "redirect:/login";
+		}
 
-        for (Resource t : allResources) {
+		if (webSocketHandler.isOnline(member.getId())) {
+			// 通知下线
+			webSocketHandler.sendMessageToUser(member.getId(),
+					new SocketMessage("logout", "").toTextMessage());
+			webSocketHandler.offLine(member.getId());
+		}
 
-            // 可用菜单
-            if (t.getResType().equals(ResourceType.MENU)) {
-                menus.add(t);
-            }
+		final List<Resource> allResources;
 
-            //所有请求资源
-            if (isNotEmpty(t.getMenuUrl())) {
-                urls.add(t.getMenuUrl());
-            }
+		// 获取用户可用菜单,所有有权限的请求，所有资源key
+		List<Role> roles = member.getRoles();
 
-            String[] funUrls = t.getFunUrls().split(",");
-            for (String url : funUrls) {
-                if (isNotEmpty(url)) {
-                    urls.add(url);
-                }
-            }
+		List<Resource> menus = new ArrayList<Resource>();
+		Set<String> urls = new HashSet<>();
+		Set<String> resourceKey = new HashSet<>();
 
-            // 资源key
-            resourceKey.add(t.getResKey());
-        }
+		if (superUserId == member.getId()) {
+			// 超级管理员，直接获取所有权限资源
+			allResources = resourceDao.findByStatus(true, new Sort(Direction.DESC, "weight"));
+		} else {
+			allResources = new ArrayList<>();
+			// forEach 1.8jdk才支持
+			roles.forEach(t -> allResources.addAll(t.getResource()));
+		}
 
-        // 将用户可用菜单和权限存入session
-        session.setAttribute("menus", menus);
-        session.setAttribute("urls", urls);
-        session.setAttribute("resourceKey", resourceKey);
-        session.setAttribute(Constants.SESSION_MEMBER_KEY, member);
-        // 是否是管理员
-        session.setAttribute("isSuper", superUserId == member.getId());
-        return "redirect:/";
-    }
+		for (Resource t : allResources) {
 
-    /**
-     * 注册
-     *
-     * @return
-     */
-    @RequestMapping(value = "/reg", method = RequestMethod.GET)
-    public String toReg() {
-        return "reg";
-    }
+			// 可用菜单
+			if (t.getResType().equals(ResourceType.MENU)) {
+				menus.add(t);
+			}
 
-    @RequestMapping(value = "/reg", method = RequestMethod.POST)
-    @Transactional
-    public String doReg(String realName, String userName, String password, String code, @SessionAttribute(SESSION_VERIFY_CODE_KEY) String verifyCode, RedirectAttributes attributes) {
-        if (isEmpty(code)) {
-            attributes.addFlashAttribute("error", "验证码不能为空！");
-        } else if (!code.equalsIgnoreCase(verifyCode)) {
-            attributes.addFlashAttribute("error", "验证码错误！");
-        } else if (isEmpty(realName)) {
-            attributes.addFlashAttribute("error", "姓名不能为空！");
-        } else if (isEmpty(userName)) {
-            attributes.addFlashAttribute("error", "账号不能为空！");
-        } else if (isEmpty(password)) {
-            attributes.addFlashAttribute("error", "密码不能为空！");
-        } else if (password.length() < 6) {
-            attributes.addFlashAttribute("error", "密码不能小于6位！");
-        } else if (memberDao.findByUserName(userName) != null) {
-            attributes.addFlashAttribute("error", "此账号已存在！");
-        }
+			// 所有请求资源
+			if (isNotEmpty(t.getMenuUrl())) {
+				urls.add(t.getMenuUrl());
+			}
 
-        if (attributes.getFlashAttributes().size() > 0) {
-            return "redirect:/reg";
-        } else {
-            Member member = new Member();
-            member.setRealName(realName);
-            member.setGender(Gender.BOY);
-            member.setUserName(userName);
-            member.setPassword(DigestUtils.sha256Hex(password));
-            member.setTelephone(userName);
-            member.setEmail(userName + "@qq.com");
-            member.setHiredate(new Date());
-            member.setStatus(true);
-            List<Role> roles = new ArrayList<>();
-            roles.add(roleDao.findOne(3l));
-            member.setRoles(roles);
-            memberDao.save(member);
-        }
-        return "redirect:/login";
-    }
+			String[] funUrls = t.getFunUrls().split(",");
+			for (String url : funUrls) {
+				if (isNotEmpty(url)) {
+					urls.add(url);
+				}
+			}
 
-    /**
-     * 校验码
-     *
-     * @param response
-     * @param session
-     */
-    @RequestMapping(value = "/verify/code", method = RequestMethod.GET)
-    public void verifyCode(HttpServletResponse response, HttpSession session) {
-        try {
-            String code = VerifyCodeUtils.outputVerifyImage(150, 50, response.getOutputStream(), 4);
-            session.setAttribute(SESSION_VERIFY_CODE_KEY, code);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+			// 资源key
+			resourceKey.add(t.getResKey());
+		}
 
+		// 将用户可用菜单和权限存入session
+		session.setAttribute("menus", menus);
+		session.setAttribute("urls", urls);
+		session.setAttribute("resourceKey", resourceKey);
+		session.setAttribute(Constants.SESSION_MEMBER_KEY, member);
+		// 是否是管理员
+		session.setAttribute("isSuper", superUserId == member.getId());
+		return "redirect:/";
+	}
 
-    /**
-     * 首页
-     *
-     * @return
-     */
-    @RequestMapping("/desktop")
-    public String desktop() {
-        return "desktop";
-    }
+	/**
+	 * 注册
+	 * @return
+	 */
+	@RequestMapping(value = "/reg", method = RequestMethod.GET)
+	public String toReg() {
 
-    /**
-     * 请求权限被拒绝的提醒页面
-     *
-     * @return
-     */
-    @RequestMapping("/reject")
-    public String reject() {
-        return "reject";
-    }
+		return "reg";
+	}
 
-    /**
-     * 修改密码
-     */
-    @RequestMapping("/change/password")
-    public String changePassword() {
-        return "password";
-    }
+	@RequestMapping(value = "/reg", method = RequestMethod.POST)
+	@Transactional
+	public String doReg(String realName, String userName, String password, String code,
+			@SessionAttribute(SESSION_VERIFY_CODE_KEY) String verifyCode,
+			RedirectAttributes attributes) {
 
-    /**
-     * 修改密码
-     */
-    @RequestMapping(value = "/change/password", method = RequestMethod.POST)
-    @Transactional
-    @ResponseBody
-    public AjaxResult doChangePassword(@SessionAttribute(name = "s_member") Member member, String oldPassword, String newPassword1, String newPassword2) {
-        if (isEmpty(oldPassword) || isEmpty(newPassword1) || isEmpty(newPassword2)) {
-            return new AjaxResult(false).setMessage("参数错误！");
-        }
+		if (isEmpty(code)) {
+			attributes.addFlashAttribute("error", "验证码不能为空！");
+		} else if (!code.equalsIgnoreCase(verifyCode)) {
+			attributes.addFlashAttribute("error", "验证码错误！");
+		} else if (isEmpty(realName)) {
+			attributes.addFlashAttribute("error", "姓名不能为空！");
+		} else if (isEmpty(userName)) {
+			attributes.addFlashAttribute("error", "账号不能为空！");
+		} else if (isEmpty(password)) {
+			attributes.addFlashAttribute("error", "密码不能为空！");
+		} else if (password.length() < 6) {
+			attributes.addFlashAttribute("error", "密码不能小于6位！");
+		} else if (memberDao.findByUserName(userName) != null) {
+			attributes.addFlashAttribute("error", "此账号已存在！");
+		}
 
-        if (!member.getPassword().equals(DigestUtils.sha256Hex(oldPassword))) {
-            return new AjaxResult(false).setMessage("原密码错误！");
-        }
+		if (attributes.getFlashAttributes().size() > 0) {
+			return "redirect:/reg";
+		} else {
+			Member member = new Member();
+			member.setRealName(realName);
+			member.setGender(Gender.BOY);
+			member.setUserName(userName);
+			member.setPassword(DigestUtils.sha256Hex(password));
+			member.setTelephone(userName);
+			member.setEmail(userName + "@qq.com");
+			member.setHiredate(new Date());
+			member.setStatus(true);
+			List<Role> roles = new ArrayList<>();
+			roles.add(roleDao.findOne(3l));
+			member.setRoles(roles);
+			memberDao.save(member);
+		}
+		return "redirect:/login";
+	}
 
-        if (!DigestUtils.sha256Hex(newPassword1).equals(DigestUtils.sha256Hex(newPassword2))) {
-            return new AjaxResult(false).setMessage("新密码，两次不匹配！");
-        }
+	/**
+	 * 校验码
+	 * @param response
+	 * @param session
+	 */
+	@RequestMapping(value = "/verify/code", method = RequestMethod.GET)
+	public void verifyCode(HttpServletResponse response, HttpSession session) {
 
-        Member m = memberDao.findOne(member.getId());
-        m.setPassword(DigestUtils.sha256Hex(newPassword1));
-        memberDao.save(m);
+		try {
+			String code = VerifyCodeUtils.outputVerifyImage(150, 50, response.getOutputStream(), 4);
+			session.setAttribute(SESSION_VERIFY_CODE_KEY, code);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 
-        return new AjaxResult();
-    }
+	/**
+	 * 首页
+	 * @return
+	 */
+	@RequestMapping("/desktop")
+	public String desktop() {
 
-    /**
-     * 修改用户资料
-     */
-    @RequestMapping("/change/info")
-    public String changeInfo() {
-        return "info";
-    }
+		return "desktop";
+	}
 
-    /**
-     * 修改用户资料
-     */
-    @RequestMapping(value = "/change/info", method = RequestMethod.POST)
-    @Transactional
-    @ResponseBody
-    public AjaxResult doChangeInfo(@SessionAttribute("s_member") Member smember,
-                                   Member member, HttpSession session) {
+	/**
+	 * 请求权限被拒绝的提醒页面
+	 * @return
+	 */
+	@RequestMapping("/reject")
+	public String reject() {
 
-        if (isEmpty(member.getRealName()) || isEmpty(member.getTelephone()) || isEmpty(member.getEmail()) || member.getGender() == null) {
-            return new AjaxResult(false).setMessage("参数错误！");
-        }
+		return "reject";
+	}
 
-        smember.setRealName(member.getRealName());
-        smember.setGender(member.getGender());
-        smember.setTelephone(member.getTelephone());
-        smember.setEmail(member.getEmail());
-        smember.setAvatar(member.getAvatar());
+	/**
+	 * 修改密码
+	 */
+	@RequestMapping("/change/password")
+	public String changePassword() {
 
-        memberDao.save(smember);
+		return "password";
+	}
 
-        //清理工作
-        attachmentService.clearAvatar(smember);
+	/**
+	 * 修改密码
+	 */
+	@RequestMapping(value = "/change/password", method = RequestMethod.POST)
+	@Transactional
+	@ResponseBody
+	public AjaxResult doChangePassword(@SessionAttribute(name = "s_member") Member member,
+			String oldPassword, String newPassword1, String newPassword2) {
 
-        session.setAttribute("s_member", smember);
+		if (isEmpty(oldPassword) || isEmpty(newPassword1) || isEmpty(newPassword2)) {
+			return new AjaxResult(false).setMessage("参数错误！");
+		}
 
-        return new AjaxResult();
-    }
+		if (!member.getPassword().equals(DigestUtils.sha256Hex(oldPassword))) {
+			return new AjaxResult(false).setMessage("原密码错误！");
+		}
+
+		if (!DigestUtils.sha256Hex(newPassword1).equals(DigestUtils.sha256Hex(newPassword2))) {
+			return new AjaxResult(false).setMessage("新密码，两次不匹配！");
+		}
+
+		Member m = memberDao.findOne(member.getId());
+		m.setPassword(DigestUtils.sha256Hex(newPassword1));
+		memberDao.save(m);
+
+		return new AjaxResult();
+	}
+
+	/**
+	 * 修改用户资料
+	 */
+	@RequestMapping("/change/info")
+	public String changeInfo() {
+
+		return "info";
+	}
+
+	/**
+	 * 修改用户资料
+	 */
+	@RequestMapping(value = "/change/info", method = RequestMethod.POST)
+	@Transactional
+	@ResponseBody
+	public AjaxResult doChangeInfo(@SessionAttribute("s_member") Member smember, Member member,
+			HttpSession session) {
+
+		if (isEmpty(member.getRealName()) || isEmpty(member.getTelephone())
+				|| isEmpty(member.getEmail()) || member.getGender() == null) {
+			return new AjaxResult(false).setMessage("参数错误！");
+		}
+
+		smember.setRealName(member.getRealName());
+		smember.setGender(member.getGender());
+		smember.setTelephone(member.getTelephone());
+		smember.setEmail(member.getEmail());
+		smember.setAvatar(member.getAvatar());
+
+		memberDao.save(smember);
+
+		// 清理工作
+		attachmentService.clearAvatar(smember);
+
+		session.setAttribute("s_member", smember);
+
+		return new AjaxResult();
+	}
 }

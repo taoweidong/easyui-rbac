@@ -20,75 +20,81 @@ import javax.validation.Valid;
 
 /**
  * 资源管理控制器
- *
- * @author gson
+ * @author taowd
  */
 @Controller
 @RequestMapping("/system/resource")
 @Transactional(readOnly = true)
 public class ResourceController {
 
-    Logger logger = Logger.getLogger(RoleController.class);
+	Logger logger = Logger.getLogger(RoleController.class);
 
-    @Autowired
-    ResourceDao resourceDao;
+	@Autowired
+	ResourceDao resourceDao;
 
-    @Autowired
-    ResourceService resourceService;
+	@Autowired
+	ResourceService resourceService;
 
-    @RequestMapping
-    public void index() {
-    }
+	@RequestMapping
+	public void index() {
 
-    @RequestMapping("/list")
-    @ResponseBody
-    public DataGrid<Resource> list() {
-        return new DataGrid<>(resourceDao.findAll(ResourceDao.WEIGHT_SORT));
-    }
+	}
 
-    @RequestMapping("/parent/tree")
-    @ResponseBody
-    public Iterable<Resource> parentTree() {
-        return resourceService.getResourceTree();
-    }
+	@RequestMapping("/list")
+	@ResponseBody
+	public DataGrid<Resource> list() {
 
-    @RequestMapping("form")
-    public void form(Long id, Model model) {
-        if (id != null) {
-            ObjectMapper mapper = new ObjectMapper();
-            Resource resource = resourceDao.findOne(id);
-            try {
-                model.addAttribute("resource", mapper.writeValueAsString(resource));
-            } catch (JsonProcessingException e) {
-                logger.error("json转换错误", e);
-            }
-            if (resource.getParent() != null) {
-                model.addAttribute("parentId", resource.getParent().getId());
-            }
-        }
-    }
+		return new DataGrid<>(resourceDao.findAll(ResourceDao.WEIGHT_SORT));
+	}
 
-    @RequestMapping({"/save", "/update"})
-    @Transactional
-    @ResponseBody
-    public Object save(@Valid Resource resource, BindingResult br) {
-        if (br.hasErrors()) {
-            logger.error("对象校验失败：" + br.getAllErrors());
-            return new AjaxResult(false).setData(br.getAllErrors());
-        } else {
-            return resourceDao.save(resource);
-        }
-    }
+	@RequestMapping("/parent/tree")
+	@ResponseBody
+	public Iterable<Resource> parentTree() {
 
-    @RequestMapping("/delete")
-    @Transactional
-    @ResponseBody
-    public AjaxResult delete(Long id) {
-        try {
-            resourceDao.delete(id);
-        } catch (Exception e) {
-            return new AjaxResult().setMessage(e.getMessage());
-        }
-        return new AjaxResult();
-    }
+		return resourceService.getResourceTree();
+	}
+
+	@RequestMapping("form")
+	public void form(Long id, Model model) {
+
+		if (id != null) {
+			ObjectMapper mapper = new ObjectMapper();
+			Resource resource = resourceDao.findOne(id);
+			try {
+				model.addAttribute("resource", mapper.writeValueAsString(resource));
+			} catch (JsonProcessingException e) {
+				logger.error("json转换错误", e);
+			}
+			if (resource.getParent() != null) {
+				model.addAttribute("parentId", resource.getParent().getId());
+			}
+		}
+	}
+
+	@RequestMapping({ "/save", "/update" })
+	@Transactional(rollbackFor = Exception.class)
+	@ResponseBody
+	public Object save(@Valid Resource resource, BindingResult br) {
+
+		if (br.hasErrors()) {
+			logger.error("对象校验失败：" + br.getAllErrors());
+			return new AjaxResult(false).setData(br.getAllErrors());
+		} else {
+			return resourceDao.save(resource);
+		}
+	}
+
+	@RequestMapping("/delete")
+	@Transactional(rollbackFor = Exception.class)
+	@ResponseBody
+	public AjaxResult delete(Long id) {
+
+		try {
+			resourceDao.delete(id);
+		} catch (Exception e) {
+
+			return new AjaxResult().setMessage(e.getMessage());
+		}
+		return new AjaxResult();
+	}
 }

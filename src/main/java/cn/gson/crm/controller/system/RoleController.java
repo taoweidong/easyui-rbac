@@ -22,93 +22,97 @@ import java.util.ArrayList;
 
 /**
  * 角色管理控制器
- *
- * @author gson
+ * @author taowd
  */
 @Controller
 @RequestMapping("/system/role")
 @Transactional(readOnly = true)
 public class RoleController {
 
-    Logger logger = Logger.getLogger(RoleController.class);
+	private static final Logger LOGGER = Logger.getLogger(RoleController.class);
 
-    @Autowired
-    RoleDao roleDao;
+	@Autowired
+	RoleDao roleDao;
 
-    @Autowired
-    ResourceService resourceService;
+	@Autowired
+	ResourceService resourceService;
 
-    @Autowired
-    ResourceDao resourceDao;
+	@Autowired
+	ResourceDao resourceDao;
 
-    @RequestMapping
-    public void index() {
-    }
+	@RequestMapping
+	public void index() {
 
-    @RequestMapping("/list")
-    @ResponseBody
-    public DataGrid<Role> list() {
-        return new DataGrid<>(roleDao.findAll(new Sort(Direction.DESC, "id")));
-    }
+	}
 
-    @RequestMapping({"/save", "/update"})
-    @Transactional
-    @ResponseBody
-    public Object save(@Valid Role role, BindingResult br) {
-        if (br.hasErrors()) {
-            logger.error("对象校验失败：" + br.getAllErrors());
-            return new AjaxResult(false).setData(br.getAllErrors());
-        } else {
-            role.setResource(null);
-            return roleDao.save(role);
-        }
-    }
+	@RequestMapping("/list")
+	@ResponseBody
+	public DataGrid<Role> list() {
 
-    @RequestMapping("/delete")
-    @Transactional
-    @ResponseBody
-    public AjaxResult delete(Long id) {
-        try {
-            roleDao.delete(id);
-        } catch (Exception e) {
-            return new AjaxResult().setMessage(e.getMessage());
-        }
-        return new AjaxResult();
-    }
+		return new DataGrid<>(roleDao.findAll(new Sort(Direction.DESC, "id")));
+	}
 
-    @RequestMapping("/resource/tree")
-    @ResponseBody
-    public Iterable<Resource> resourceTree() {
-        return resourceService.getResourceTree(true);
-    }
+	@RequestMapping({ "/save", "/update" })
+	@Transactional
+	@ResponseBody
+	public Object save(@Valid Role role, BindingResult br) {
 
-    /**
-     * 角色关联资源
-     *
-     * @param roleId
-     * @param resourceId
-     * @return
-     */
-    @RequestMapping("/resource/save")
-    @Transactional
-    @ResponseBody
-    public AjaxResult resourceSave(Long roleId, Long[] resourceId) {
-        Role role = roleDao.findOne(roleId);
-        if (role != null && resourceId != null && resourceId.length > 0) {
-            try {
-                role.setResource(new ArrayList<>());
-                for (Long rid : resourceId) {
-                    if (rid != null) {
-                        // 将资源关联到角色
-                        role.getResource().add(resourceDao.findOne(rid));
-                    }
-                }
-                roleDao.save(role);
-                return new AjaxResult();
-            } catch (Exception e) {
-                logger.error("角色资源关联错误", e);
-            }
-        }
-        return new AjaxResult(false, "关联失败！");
-    }
+		if (br.hasErrors()) {
+			LOGGER.error("对象校验失败：" + br.getAllErrors());
+			return new AjaxResult(false).setData(br.getAllErrors());
+		} else {
+			role.setResource(null);
+			return roleDao.save(role);
+		}
+	}
+
+	@RequestMapping("/delete")
+	@Transactional
+	@ResponseBody
+	public AjaxResult delete(Long id) {
+
+		try {
+			roleDao.delete(id);
+		} catch (Exception e) {
+			return new AjaxResult().setMessage(e.getMessage());
+		}
+		return new AjaxResult();
+	}
+
+	@RequestMapping("/resource/tree")
+	@ResponseBody
+	public Iterable<Resource> resourceTree() {
+
+		return resourceService.getResourceTree(true);
+	}
+
+	/**
+	 * 角色关联资源
+	 * @param roleId
+	 * @param resourceId
+	 * @return
+	 */
+	@RequestMapping("/resource/save")
+	@Transactional
+	@ResponseBody
+	public AjaxResult resourceSave(Long roleId, Long[] resourceId) {
+
+		Role role = roleDao.findOne(roleId);
+		if (role != null && resourceId != null && resourceId.length > 0) {
+			try {
+				role.setResource(new ArrayList<>());
+				for (Long rid : resourceId) {
+					if (rid != null) {
+						// 将资源关联到角色
+						role.getResource().add(resourceDao.findOne(rid));
+					}
+				}
+				roleDao.save(role);
+				return new AjaxResult();
+			} catch (Exception e) {
+				LOGGER.error("角色资源关联错误", e);
+			}
+		}
+		return new AjaxResult(false, "关联失败！");
+	}
 }

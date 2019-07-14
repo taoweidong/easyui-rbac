@@ -2,13 +2,13 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>CRM学员管理系统</title>
+  <title>AJR管理系统</title>
   <link rel="stylesheet" href="/css/login.css">
   <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
 </head>
 <body>
 <div class="logo_box">
-  <h1>CRM学员管理系统</h1>
+  <h1>AJR管理系统</h1>
   <form action="login" method="post" autocomplete="off">
     <div class="input_outer">
       <i class="fa fa-user-o u_user"></i>

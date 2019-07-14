@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>CRM学员管理系统注册</title>
+  <title>AJR管理系统注册</title>
   <link rel="stylesheet" href="/css/login.css">
   <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
 </head>
