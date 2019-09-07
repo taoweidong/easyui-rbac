@@ -1,11 +1,14 @@
-#起步
+# 起步
 
 基于JDK1.8哦。用了一些新特性，所以最好是使用最新版本的jdk
 
-##### 修改数据源配置
-	在application.properties中配好自己的数据源。否则启动会失败！
+> 基于SpringBoot和EasyUI的一个基本项目框架，有基础的RBAC权限控制，可以直接在项目中使用
 
-##### 初始化数据
+## 修改数据源配置
+
+在application.properties中配好自己的数据源。否则启动会失败！
+
+## 初始化数据
 
 data.sql为初始化数据SQL脚本。
 
@@ -18,11 +21,11 @@ data.sql为初始化数据SQL脚本。
 #最后欢迎大家关注我的新论坛，多多支持
 `https://bbs.jeasyuicn.com/`
 
-#### 案例在线演示：
+## 案例在线演示：
 
 [案例在线演示](http://crud.jeasyuicn.com/)
 
-##### 项目截图
+## 项目截图
 
 ![输入图片说明](https://git.oschina.net/uploads/images/2017/0629/172822_51c49f23_82.jpeg "在这里输入图片标题")
 ![输入图片说明](https://git.oschina.net/uploads/images/2017/0629/172839_4dfed0a7_82.png "在这里输入图片标题")
